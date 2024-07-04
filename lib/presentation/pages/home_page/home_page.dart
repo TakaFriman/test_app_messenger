@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_app_messenger/data/models/message_model.dart';
-
-import 'package:test_app_messenger/presentation/pages/home_page/components/chat_container.dart';
 import 'package:test_app_messenger/presentation/pages/home_page/components/chat_list.dart';
 import 'package:test_app_messenger/presentation/pages/home_page/components/search_container.dart';
 

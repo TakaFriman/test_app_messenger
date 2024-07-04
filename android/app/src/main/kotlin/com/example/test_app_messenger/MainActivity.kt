@@ -1,4 +1,4 @@
-package com.example.test_app_messenger
+package com.takaFriman.test_app_messenger
 
 import io.flutter.embedding.android.FlutterActivity
 

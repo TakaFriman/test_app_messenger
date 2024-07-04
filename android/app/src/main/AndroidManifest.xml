@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+ package="com.takaFriman.test_app_messenger">
     <application
         android:label="test_app_messenger"
         android:name="${applicationName}"

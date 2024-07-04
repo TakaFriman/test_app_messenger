@@ -12,7 +12,7 @@ class ChatContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => context.pushNamed(
-        'Chat_page',
+        'ChatPage',
         pathParameters: {
           'name': chat.name,
           'messenger': chat.messenger,
@@ -20,8 +20,8 @@ class ChatContainer extends StatelessWidget {
         },
       ),
       child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 5),
         color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           children: [
             Row(
@@ -70,10 +70,6 @@ class ChatContainer extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-            const Divider(
-              color: Color.fromRGBO(237, 242, 246, 1),
-              thickness: 1.5,
             ),
           ],
         ),

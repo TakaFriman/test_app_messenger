@@ -1,5 +1,5 @@
 class MessageModel {
-  final int id;
+  final String id;
   final String name;
   final String messenger;
   final String date;

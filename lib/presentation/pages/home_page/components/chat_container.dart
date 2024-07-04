@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app_messenger/data/models/message_model.dart';
@@ -9,52 +10,73 @@ class ChatContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            CircleAvatar(
-              maxRadius: 25,
-              backgroundColor: getRandomColor(),
-              child: Text(
-                getInitials(chat.name),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+    return GestureDetector(
+      onTap: () => context.pushNamed(
+        'Chat_page',
+        pathParameters: {
+          'name': chat.name,
+          'messenger': chat.messenger,
+          'date': chat.date,
+        },
+      ),
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  maxRadius: 25,
+                  backgroundColor: getRandomColor(),
+                  child: Text(
+                    getInitials(chat.name),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    chat.name,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chat.name,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        chat.messenger,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color.fromRGBO(94, 122, 144, 1),
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    chat.messenger,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Color.fromRGBO(94, 122, 144, 1),
-                    ),
+                ),
+                Text(
+                  formatDate(chat.date),
+                  style: const TextStyle(
+                    color: Color.fromRGBO(94, 122, 144, 1),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Text(
-              formatDate(chat.date),
-              style: const TextStyle(color: Color.fromRGBO(94, 122, 144, 1), fontSize: 12, fontWeight: FontWeight.w500),
+            const Divider(
+              color: Color.fromRGBO(237, 242, 246, 1),
+              thickness: 1.5,
             ),
-          ]),
-          const Divider(color: Color.fromRGBO(237, 242, 246, 1), thickness: 1.5),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:test_app_messenger/presentation/pages/home_page.dart';
-import 'package:test_app_messenger/presentation/pages/splash_page.dart';
+import 'package:test_app_messenger/presentation/pages/home_page/home_page.dart';
+import 'package:test_app_messenger/presentation/pages/splash_page/splash_page.dart';
 
 class AppNavigation {
   AppNavigation._();

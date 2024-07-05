@@ -1,110 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:test_app_messenger/domain/auth/auth.dart';
+import 'package:provider/provider.dart';
+import 'package:test_app_messenger/services/auth/auth_service.dart';
+import 'package:test_app_messenger/presentation/pages/auth_pages/login_page/components/login_button.dart';
+import 'package:test_app_messenger/presentation/pages/auth_pages/login_page/components/my_text_field.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final void Function()? onTap;
+  const LoginPage({super.key, required this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final AuthService _auth = AuthService();
-  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  String email = '';
-  String password = '';
-  String error = '';
+  void signIn() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      await authService.signInWithEmailandPasswrod(emailController.text, passwordController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 100),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  const Text('ВОЙТИ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 24, letterSpacing: -0.5, color: Colors.black)),
-                  GestureDetector(
-                    onTap: () => context.pushNamed('SignUp'),
-                    child: const Text('РЕГИСТРАЦИЯ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 24,
-                            letterSpacing: -0.5,
-                            color: Color.fromRGBO(136, 136, 136, 1))),
-                  )
-                ]),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                  validator: (val) => val!.isEmpty ? 'Введите Email' : null,
-                  onChanged: (val) {
-                    setState(() {
-                      email = val;
-                    });
-                  },
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    filled: true,
-                    isDense: true,
-                    hintText: 'example@mail.ru',
-                  )),
-              const SizedBox(height: 20),
-              TextFormField(
-                validator: (val) => val!.length < 6 ? 'Введите 6 + cимволов' : null,
-                onChanged: (val) {
-                  setState(() {
-                    password = val;
-                  });
-                },
-                obscureText: true,
-                decoration: const InputDecoration(
-                  filled: true,
-                  isDense: true,
-                  hintText: '8+ символов',
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 100),
+                const SizedBox(height: 20),
+                MyTextField(controller: emailController, hintText: 'email', obscureText: false),
+                const SizedBox(height: 20),
+                MyTextField(controller: passwordController, hintText: 'password', obscureText: true),
+                const SizedBox(height: 20),
+                LoginButton(onTap: signIn),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Not a member?'),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTap: widget.onTap,
+                      child: const Text('Register now'),
+                    )
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    dynamic result = await _auth.login(email, password);
-                    if (result == null) {
-                      setState(() {
-                        error = 'Не удалось войти';
-                      });
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Center(
-                      child: Text('Войти',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w400, letterSpacing: -0.5, color: Colors.white))),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                error,
-                style: const TextStyle(color: Colors.red, fontSize: 16),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

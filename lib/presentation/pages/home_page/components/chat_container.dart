@@ -15,7 +15,7 @@ class ChatContainer extends StatelessWidget {
         'ChatPage',
         pathParameters: {
           'name': chat.name,
-          'messenger': chat.messenger,
+          'messenger': chat.message,
           'date': chat.date,
         },
       ),
@@ -52,7 +52,7 @@ class ChatContainer extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        chat.messenger,
+                        chat.message,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Color.fromRGBO(94, 122, 144, 1),

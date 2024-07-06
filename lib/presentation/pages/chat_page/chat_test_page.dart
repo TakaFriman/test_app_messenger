@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:test_app_messenger/presentation/pages/auth_pages/login_page/components/my_text_field.dart';
+import 'package:test_app_messenger/presentation/widgets/my_text_field.dart';
+import 'package:test_app_messenger/presentation/pages/chat_page/components/container_mic_attach.dart';
 import 'package:test_app_messenger/presentation/pages/chat_page/components/my_chat_bubble.dart';
 import 'package:test_app_messenger/presentation/pages/chat_page/components/other_chat_bubble.dart';
 import 'package:test_app_messenger/presentation/pages/home_page/components/chat_container.dart';
@@ -21,12 +22,30 @@ class _ChatTestPageState extends State<ChatTestPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       await _chatService.sendMessage(widget.receiverUserId, _messageController.text);
 
       _messageController.clear();
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.bounceIn,
+      );
     }
   }
 
@@ -120,59 +139,66 @@ class _ChatTestPageState extends State<ChatTestPage> {
             return Text('Error${snapshot.error}');
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('loading...');
+            return const Center(
+              child: Text(
+                'Загрузка...',
+                style: TextStyle(fontSize: 14, color: Color.fromRGBO(94, 122, 144, 1)),
+              ),
+            );
           }
-          return ListView(
-            children: snapshot.data!.docs.map((document) => _buildMessageItem(document)).toList(),
+          var messages = snapshot.data!.docs;
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _scrollToBottom()); // Прокрутить вниз при обновлении данных
+          return ListView.builder(
+            controller: _scrollController,
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              return _buildMessageItem(messages[index], index == messages.length - 1);
+            },
           );
         });
   }
 
-  Widget _buildMessageItem(DocumentSnapshot document) {
+  Widget _buildMessageItem(DocumentSnapshot document, bool isLast) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
     var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid) ? Alignment.centerRight : Alignment.centerLeft;
-    if (data['senderId'] == _firebaseAuth.currentUser!.uid) {
-      return Container(
-        alignment: alignment,
-        child: Column(
-          children: [MyChatBubble(message: data['message'], time: data['timestamp']), const SizedBox(height: 6)],
-        ),
-      );
-    } else {
-      return Container(
-        alignment: alignment,
-        child: Column(
-          children: [OtherChatBubble(message: data['message'], time: data['timestamp']), const SizedBox(height: 6)],
-        ),
-      );
-    }
+    return Container(
+      margin: EdgeInsets.only(top: 6, bottom: isLast ? 20 : 0),
+      alignment: alignment,
+      child: Column(
+        children: [
+          if (data['senderId'] == _firebaseAuth.currentUser!.uid)
+            MyChatBubble(message: data['message'], time: data['timestamp'])
+          else
+            OtherChatBubble(message: data['message'], time: data['timestamp']),
+        ],
+      ),
+    );
   }
 
   Widget _buildMessageInput() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-            child: SvgPicture.asset(
-              'assets/icons/back.svg',
-              color: const Color.fromRGBO(43, 51, 62, 1),
-            ),
-            onTap: () {}),
+          onTap: sendMessage,
+          child: const ContainerMicAttach(icon: 'assets/icons/attach.svg'),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: MyTextField(
             controller: _messageController,
             hintText: 'Сообщение',
             obscureText: false,
+            onSubmitted: sendMessage,
           ),
         ),
         const SizedBox(width: 8),
         GestureDetector(
-            onTap: sendMessage,
-            child: SvgPicture.asset(
-              'assets/icons/out.svg',
-              color: const Color.fromRGBO(43, 51, 62, 1),
-            )),
+          onTap: sendMessage,
+          child: const ContainerMicAttach(icon: 'assets/icons/audio.svg'),
+        ),
       ],
     );
   }

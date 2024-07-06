@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:test_app_messenger/presentation/pages/chat_page/chat_page.dart';
+import 'package:test_app_messenger/presentation/pages/chat_page/chat_test_page.dart';
+import 'package:test_app_messenger/presentation/pages/home_page/components/chat_container.dart';
 import 'package:test_app_messenger/services/auth/auth_service.dart';
 import 'package:test_app_messenger/presentation/pages/home_page/components/chat_list.dart';
 import 'package:test_app_messenger/presentation/pages/home_page/components/search_container.dart';
@@ -72,7 +72,12 @@ class _HomePageState extends State<HomePage> {
           return const Text('error');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('loading..');
+          return const Center(
+            child: Text(
+              'Загрузка...',
+              style: TextStyle(fontSize: 14, color: Color.fromRGBO(94, 122, 144, 1)),
+            ),
+          );
         }
         return Expanded(
           child: ListView(
@@ -87,11 +92,7 @@ class _HomePageState extends State<HomePage> {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     if (_auth.currentUser!.email != data['email']) {
-      return ListTile(
-        title: Text(
-          data['email'],
-          style: const TextStyle(color: Colors.black),
-        ),
+      return GestureDetector(
         onTap: () {
           Navigator.push(
               context,
@@ -101,6 +102,68 @@ class _HomePageState extends State<HomePage> {
                         receiverUserId: data['uid'],
                       )));
         },
+        child: Container(
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    maxRadius: 25,
+                    backgroundColor: getRandomColor(),
+                    child: Text(
+                      getInitials('В В'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(
+                          data['email'],
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Text(
+                          'Привет!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color.fromRGBO(94, 122, 144, 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    formatDate('2024-07-03T08:45:00'),
+                    style: const TextStyle(
+                      color: Color.fromRGBO(94, 122, 144, 1),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              const Divider(
+                color: Color.fromRGBO(237, 242, 246, 1),
+                thickness: 1.5,
+                height: 1,
+              ),
+            ],
+          ),
+        ),
       );
     } else {
       return Container();

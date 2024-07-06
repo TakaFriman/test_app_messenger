@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_app_messenger/services/auth/auth_service.dart';
-import 'package:test_app_messenger/presentation/pages/auth_pages/login_page/components/my_text_field.dart';
+import 'package:test_app_messenger/presentation/widgets/my_text_field.dart';
 
 class SignUpPage extends StatefulWidget {
   final void Function()? onTap;
@@ -33,6 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -41,11 +42,23 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 const SizedBox(height: 100),
                 const SizedBox(height: 20),
-                MyTextField(controller: emailController, hintText: 'email', obscureText: false),
+                MyTextField(
+                  controller: emailController,
+                  hintText: 'example@mail.ru',
+                  obscureText: false,
+                ),
                 const SizedBox(height: 20),
-                MyTextField(controller: passwordController, hintText: 'password', obscureText: true),
+                MyTextField(
+                  controller: passwordController,
+                  hintText: '6+ символов',
+                  obscureText: true,
+                ),
                 const SizedBox(height: 20),
-                MyTextField(controller: confrimPasswordController, hintText: 'confrirm password', obscureText: true),
+                MyTextField(
+                  controller: confrimPasswordController,
+                  hintText: 'повторите пароль',
+                  obscureText: true,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: signUp,
@@ -63,15 +76,20 @@ class _SignUpPageState extends State<SignUpPage> {
                                 fontSize: 20, fontWeight: FontWeight.w400, letterSpacing: -0.5, color: Colors.white))),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already a member?'),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: const Text('Login now'),
+                    const Text(
+                      'Уже зарегистрированы?',
+                      style: TextStyle(color: Color.fromRGBO(94, 122, 144, 1), fontWeight: FontWeight.w500),
+                    ),
+                    TextButton(
+                      onPressed: widget.onTap,
+                      child: const Text(
+                        'Войти',
+                        style: TextStyle(color: Color.fromRGBO(43, 51, 62, 1), fontWeight: FontWeight.w500),
+                      ),
                     )
                   ],
                 ),

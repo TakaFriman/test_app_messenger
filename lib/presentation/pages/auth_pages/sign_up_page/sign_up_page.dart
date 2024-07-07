@@ -15,6 +15,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confrimPasswordController = TextEditingController();
+  final nameController = TextEditingController();
 
   void signUp() async {
     if (passwordController.text != confrimPasswordController.text) {
@@ -24,7 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final authService = Provider.of<AuthService>(context, listen: false);
 
     try {
-      await authService.signUpWithEmailandPassword(emailController.text, passwordController.text);
+      await authService.signUpWithEmailandPassword(emailController.text, passwordController.text, nameController.text);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
     }
@@ -41,6 +42,12 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               children: [
                 const SizedBox(height: 100),
+                const SizedBox(height: 20),
+                MyTextField(
+                  controller: nameController,
+                  hintText: 'имя пользователя',
+                  obscureText: false,
+                ),
                 const SizedBox(height: 20),
                 MyTextField(
                   controller: emailController,

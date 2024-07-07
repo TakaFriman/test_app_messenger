@@ -27,6 +27,8 @@ class ChatService extends ChangeNotifier {
     String chatRoomId = ids.join('_');
 
     await _firestore.collection('chat_rooms').doc(chatRoomId).collection('messages').add(newMessage.toMap());
+
+    notifyListeners();
   }
 
   //get messages
@@ -41,5 +43,25 @@ class ChatService extends ChangeNotifier {
         .collection('messages')
         .orderBy('timestamp', descending: false)
         .snapshots();
+  }
+
+  Future<Map<String, dynamic>?> getLastMessage(String userId, String otherUserId) async {
+    List<String> ids = [userId, otherUserId];
+    ids.sort();
+    String chatRoomId = ids.join('_');
+
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.data() as Map<String, dynamic>?;
+    } else {
+      return null;
+    }
   }
 }

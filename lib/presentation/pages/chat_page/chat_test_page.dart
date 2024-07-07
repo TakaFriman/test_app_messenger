@@ -2,17 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test_app_messenger/presentation/widgets/get_colors_initials.dart';
 import 'package:test_app_messenger/presentation/widgets/my_text_field.dart';
 import 'package:test_app_messenger/presentation/pages/chat_page/components/container_mic_attach.dart';
 import 'package:test_app_messenger/presentation/pages/chat_page/components/my_chat_bubble.dart';
 import 'package:test_app_messenger/presentation/pages/chat_page/components/other_chat_bubble.dart';
-import 'package:test_app_messenger/presentation/pages/home_page/components/chat_container.dart';
 import 'package:test_app_messenger/services/chat/chat_service.dart';
 
 class ChatTestPage extends StatefulWidget {
-  final String receiverUserEmail;
+  final String receiverNickname;
   final String receiverUserId;
-  const ChatTestPage({super.key, required this.receiverUserEmail, required this.receiverUserId});
+  const ChatTestPage({super.key, required this.receiverNickname, required this.receiverUserId});
 
   @override
   State<ChatTestPage> createState() => _ChatTestPageState();
@@ -69,7 +69,7 @@ class _ChatTestPageState extends State<ChatTestPage> {
             maxRadius: 25,
             backgroundColor: getRandomColor(),
             child: Text(
-              getInitials('Виктор Власов'),
+              getInitials(widget.receiverNickname),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -83,7 +83,7 @@ class _ChatTestPageState extends State<ChatTestPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.receiverUserEmail,
+                  widget.receiverNickname,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,

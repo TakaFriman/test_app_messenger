@@ -6,30 +6,24 @@ class AuthService extends ChangeNotifier {
   // auth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  //firestore
+  // firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  //signin
-  Future<UserCredential> signInWithEmailandPasswrod(String email, String password) async {
+  // sign in
+  Future<UserCredential> signInWithEmailandPassword(String email, String password) async {
     try {
       UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'email': email,
-      }, SetOptions(merge: true));
       return userCredential;
-    }
-    //Ошибка
-    on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       throw Exception(e.code);
     }
   }
 
-  // registr
-  Future<UserCredential> signUpWithEmailandPassword(String email, String password) async {
+  // sign up
+  Future<UserCredential> signUpWithEmailandPassword(String email, String password, String nickname) async {
     try {
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -39,6 +33,7 @@ class AuthService extends ChangeNotifier {
       _firestore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
+        'nickname': nickname,
       });
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -46,7 +41,7 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  //signOut
+  // sign out
   Future<void> signOut() async {
     try {
       return await _firebaseAuth.signOut();
